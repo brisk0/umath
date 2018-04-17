@@ -60,7 +60,24 @@ factor() {
 		expect(CLOPAREN);
 		block = concath(oparen(block.height), block);
 		block = concath(block, cloparen(block.height));
-	} else if(in->type == VAR || in->type == NUM) {
+	} else if(in->type == NUM) {
+		block.height = 1;
+		block.width = strlen(in->name);
+		block.lines = calloc(1, sizeof(char *));
+		block.lines[0] = strdup(in->name);
+		in++;
+		// Implicit multiplication
+		while(in->type == VAR) {
+			Block rblock;
+			rblock.height = 1;
+			rblock.width = strlen(in->name);
+			rblock.lines = calloc(1, sizeof(char *));
+			rblock.lines[0] = strdup(in->name);
+			block = concath(block, rblock);
+			free_block(rblock);
+			in++;
+		}
+	} else if(in->type == VAR) {
 		block.height = 1;
 		block.width = strlen(in->name);
 		block.lines = calloc(1, sizeof(char *));
@@ -76,17 +93,19 @@ factor() {
 static Block
 term() {
 	Block block = factor();
-	if(in->type == PROD) {
-		in++;
-		// For explicit mul:
-		// block = concath(block, single("×"));
-		block = concath(block, term());
-	} else if(in->type == DIV) {
-		in++;
-		Block block2 = term();
-		block = concatv(block, stretch1h(max(block.width, block2.width),"⎯"));
-		block = concatv(block, block2);
-	} 
+	while(in->type == PROD || in->type == DIV) {
+		if(in->type == PROD) {
+			in++;
+			// For explicit mul:
+			//block = concath(block, single("×"));
+			block = concath(block, factor());
+		} else if(in->type == DIV) {
+			in++;
+			Block block2 = factor();
+			block = concatv(block, stretch1h(max(block.width, block2.width),"⎯"));
+			block = concatv(block, block2);
+		} 
+	}
 
 	return block;
 }

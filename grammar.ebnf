@@ -1,5 +1,4 @@
-factor     = '(' expression ')' | variable | constant;
-term       = factor [['*'|'/'] term];
-(* Implicit multiplication in input seems to pose a problem*)
+factor     = '(' expression ')' | variable {constant} | constant;
+term       = factor {['*'|'/'] factor};
 expression = term [['+'|'-'] expression];
 constant   = ['+'|'-'] number;

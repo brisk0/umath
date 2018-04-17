@@ -32,10 +32,10 @@ int main(int argc, char *argv[]) {
 		getline(&input, &n, stdin);
 		tokenize(input);
 		// printf("Completed tokenization\n");
-		// for(int i = 0; i < tokcount; i++) {
-		// 	print_tok(toklist[i]);
-		// 	printf(" ");
-		// }
+		//for(int i = 0; i < tokcount; i++) {
+		//	print_tok(toklist[i]);
+		//	printf(" ");
+		//}
 		// printf("\nCompleted printing\n");
 		print_block(parse(toklist));
 
