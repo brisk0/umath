@@ -66,17 +66,6 @@ factor() {
 		block.lines = calloc(1, sizeof(char *));
 		block.lines[0] = strdup(in->name);
 		in++;
-		// Implicit multiplication
-		while(in->type == VAR) {
-			Block rblock;
-			rblock.height = 1;
-			rblock.width = strlen(in->name);
-			rblock.lines = calloc(1, sizeof(char *));
-			rblock.lines[0] = strdup(in->name);
-			block = concath(block, rblock);
-			free_block(rblock);
-			in++;
-		}
 	} else if(in->type == VAR) {
 		block.height = 1;
 		block.width = strlen(in->name);
@@ -121,6 +110,11 @@ expression() {
 		in++;
 		block = concath(block, single("−"));
 		block = concath(block, expression());
+	}
+	if(in->type != EOL) {
+		fprintf(stderr, "Trailing characters; Possible missing operator before %s\n", in->name? in->name : tok_string[in->type]);
+		exit(EXIT_FAILURE);
+		
 	}
 	return block;
 }
