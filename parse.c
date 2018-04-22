@@ -111,11 +111,6 @@ expression() {
 		block = concath(block, single("−"));
 		block = concath(block, expression());
 	}
-	if(in->type != EOL) {
-		fprintf(stderr, "Trailing characters; Possible missing operator before %s\n", in->name? in->name : tok_string[in->type]);
-		exit(EXIT_FAILURE);
-		
-	}
 	return block;
 }
 
@@ -123,6 +118,12 @@ Block
 parse(struct Token *input)
 {
 	in = input;
-	return expression();
+	Block block = expression();
+	if(in->type != EOL) {
+		fprintf(stderr, "Trailing characters; Possible missing operator before %s\n", in->name? in->name : tok_string[in->type]);
+		exit(EXIT_FAILURE);
+		
+	}
+	return block;
 	
 }
