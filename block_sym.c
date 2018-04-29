@@ -1,8 +1,8 @@
 #include "block_sym.h"
 
-Block
+Block *
 bracket(int height, const char *bracket) {
-	Block block;
+	Block *block;
 	switch(bracket[0]) {
 		case '(': block = oparen(height); break;
 		case ')': block = cloparen(height); break;
@@ -14,32 +14,32 @@ bracket(int height, const char *bracket) {
 	return block;
 }
 
-Block
+Block *
 oparen(int height) {
 		if(height == 1) return single("(");
 		return stretch3v(height, "⎛", "⎜", "⎝");
 }
 
 
-Block
+Block *
 cloparen(int height) {
 		if(height == 1) return single(")");
 		return stretch3v(height, "⎞", "⎟", "⎠");
 }
 
-Block
+Block *
 obracket(int height) {
 		if(height == 1) return single("[");
 		return stretch3v(height, "⎡", "⎢", "⎣");
 }
 
-Block
+Block *
 clobracket(int height) {
 		if(height == 1) return single("]");
 		return stretch3v(height, "⎤", "⎥", "⎦");
 }
 
-Block
+Block *
 obrace(int height) {
 	if(height == 1) return single("{");
 	if(height == 2) return concath(single("⎰"), single("⎱"));
@@ -50,7 +50,7 @@ obrace(int height) {
 	}
 }
 
-Block
+Block *
 clobrace(int height) {
 	if(height == 1) return single("}");
 	if(height == 2) return concath(single("⎱"), single("⎰"));

@@ -16,7 +16,7 @@ error_expected(char *expect);
 
 // Parse a sequence of tokens into a block, printable via print_block
 // Not thread-safe
-Block
+Block *
 parse(struct Token *in);
 
 #endif /* PARSE_H */

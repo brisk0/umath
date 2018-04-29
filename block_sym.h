@@ -10,30 +10,31 @@
 
 // Dispatches to other bracket funcs based on bracket
 // E.g. bracket(5,"{") → obrace(5);
-Block
+Block *
 bracket(int height, const char *bracket);
+
 // Creates an opening parenthesis of arbitrary height;
-Block
+Block *
 oparen(int height);
 
 // Creates a closing parenthesis of arbitrary height;
-Block
+Block *
 cloparen(int height);
 
 // [
-Block
+Block *
 obracket(int height);
 
 // ]
-Block
+Block *
 clobracket(int height);
 
 // {
-Block
+Block *
 obrace(int height);
 
 // }
-Block
+Block *
 clobrace(int height);
 
 #endif /* BLOCK_SYM_H */

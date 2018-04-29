@@ -46,31 +46,33 @@ accept(enum TokenType t) {
  * unacceptable.
  */
 
-static Block factor();
-static Block term();
-static Block expression();
+static Block *factor();
+static Block *term();
+static Block *expression();
 
 
-static Block
+static Block *
 factor() {
-	Block block;
+	Block *block;
 	if(in->type == OPAREN) {
 		in++;
 		block = expression();
 		expect(CLOPAREN);
-		block = concath(oparen(block.height), block);
-		block = concath(block, cloparen(block.height));
+		block = concath(oparen(block->height), block);
+		block = concath(block, cloparen(block->height));
 	} else if(in->type == NUM) {
-		block.height = 1;
-		block.width = strlen(in->name);
-		block.lines = calloc(1, sizeof(char *));
-		block.lines[0] = strdup(in->name);
+		block = malloc(sizeof(Block));
+		block->height = 1;
+		block->width = strlen(in->name);
+		block->lines = calloc(1, sizeof(char *));
+		block->lines[0] = strdup(in->name);
 		in++;
 	} else if(in->type == VAR) {
-		block.height = 1;
-		block.width = strlen(in->name);
-		block.lines = calloc(1, sizeof(char *));
-		block.lines[0] = strdup(in->name);
+		block = malloc(sizeof(Block));
+		block->height = 1;
+		block->width = strlen(in->name);
+		block->lines = calloc(1, sizeof(char *));
+		block->lines[0] = strdup(in->name);
 		in++;
 	} else {
 		fprintf(stderr,"Expected factor, found %s instead\n", tok_string[in->type]);
@@ -79,9 +81,9 @@ factor() {
 	return block;
 }
 
-static Block
+static Block *
 term() {
-	Block block = factor();
+	Block *block = factor();
 	while(in->type == PROD || in->type == DIV) {
 		if(in->type == PROD) {
 			in++;
@@ -90,8 +92,8 @@ term() {
 			block = concath(block, factor());
 		} else if(in->type == DIV) {
 			in++;
-			Block block2 = factor();
-			block = concatv(block, stretch1h(max(block.width, block2.width),"⎯"));
+			Block *block2 = factor();
+			block = concatv(block, stretch1h(max(block->width, block2->width),"⎯"));
 			block = concatv(block, block2);
 		} 
 	}
@@ -99,9 +101,9 @@ term() {
 	return block;
 }
 
-static Block
+static Block *
 expression() {
-	Block block = term();
+	Block *block = term();
 	if(in->type == ADD) {
 		in++;
 		block = concath(block, single("+"));
@@ -114,11 +116,11 @@ expression() {
 	return block;
 }
 
-Block
+Block *
 parse(struct Token *input)
 {
 	in = input;
-	Block block = expression();
+	Block *block = expression();
 	if(in->type != EOL) {
 		fprintf(stderr, "Trailing characters; Possible missing operator before %s\n", in->name? in->name : tok_string[in->type]);
 		exit(EXIT_FAILURE);

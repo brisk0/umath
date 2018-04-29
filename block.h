@@ -21,13 +21,12 @@ typedef struct {
 	char **lines;
 } Block;
 
-void
-print_block(Block block);
+void print_block(Block *block);
 
-void free_block(Block block);
+void free_block(Block *block);
 
 // Create an arbitrarily sized block of spaces
-Block
+Block *
 spaces(int width, int height);
 
 // Centers the given block in a field of spaces of shape width*height
@@ -35,20 +34,20 @@ spaces(int width, int height);
 // block, the block is left untouched in that dimension.
 // In case the block cannot be perfectly centred, it will be shifted towards
 // the left-bottom of the new block
-Block
-center(int width, int height, Block block);
+Block *
+center(int width, int height, Block *block);
 
 // Concats two blocks, one atop the other
-Block
-concatv(Block b1, Block b2);
+Block *
+concatv(Block *b1, Block *b2);
 
 // Concatenates two blocks, side by side
-Block
-concath(Block b1, Block b2);
+Block *
+concath(Block *b1, Block *b2);
 
 // Horizontally stretches a single character to width "width"
 // E.g. stretch1h(3, "-") → "---"
-Block
+Block *
 stretch1h(int width, char *fill);
 
 // Stretches a 3-part symbol to arbitrary height
@@ -57,20 +56,20 @@ stretch1h(int width, char *fill);
 // ⎜
 // ⎜
 // ⎝
-Block
+Block *
 stretch3v(int height, char * start, char *fill, char *end);
 
 // Same as above but inserts "mid" in the center (or center +1 if odd)
-Block
+Block *
 stretch4v(int height, char * start, char *fill, char *mid, char *end);
 
 // Same as above but inserts two mid characters at height/2 and height/2 + 1
 // in the center
-Block
+Block *
 stretch5v(int height, char * start, char *fill, char *mid1, char *mid2, char *end);
 
 // Returns a block containing a single grapheme
-Block
+Block *
 single(char *sym);
 
 #endif /* BLOCK_H */
