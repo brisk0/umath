@@ -4,6 +4,7 @@
  */
 
 void print_block(Block *block) {
+	if(!block) return;
 	for(int i = 0; i < block->height; i++) {
 		printf("%s\n", block->lines[i]);
 	}
@@ -71,6 +72,9 @@ center(int width, int height, Block *block) {
 
 Block *
 concatv(Block *b1, Block *b2) {
+	if(!b1) return b2;
+	if(!b2) return b1;
+
 	Block *block = malloc(sizeof(Block));
 	block->width = max(b1->width, b2->width);
 	block->height = b1->height + b2->height;
@@ -95,6 +99,9 @@ concatv(Block *b1, Block *b2) {
 
 Block *
 concath(Block *b1, Block *b2) {
+	if(!b1) return b2;
+	if(!b2) return b1;
+
 	if(b1->lines == NULL) {
 		printf("1st block has no lines\n");
 	}
