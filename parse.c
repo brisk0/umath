@@ -89,6 +89,7 @@ term() {
 			in++;
 			// For explicit mul:
 			//block = concath(block, single("×"));
+			block = concath(block, single("⋅"));
 			block = concath(block, factor());
 		} else if(in->type == DIV) {
 			in++;
