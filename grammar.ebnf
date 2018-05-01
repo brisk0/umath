@@ -1,4 +1,4 @@
-factor     = '(' expression ')' | variable {constant} | constant;
-term       = factor {['*'|'/'] factor};
-expression = term [['+'|'-'] expression];
-constant   = ['+'|'-'] number;
+expression = term [('+'|'-') expression];
+term       = fraction ['*' term];
+fraction   = factor ['/' fraction];
+factor     = '(' expression ')' | variable | constant;

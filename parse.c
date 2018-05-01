@@ -50,68 +50,68 @@ static Block *factor();
 static Block *term();
 static Block *expression();
 
+static Block *
+value() {
+	Block *block = NULL;
+	if(in->type == NUM || in->type == VAR) {
+		block = malloc(sizeof(Block));
+		block->height = 1;
+		block->width = strlen(in->name);
+		block->lines = calloc(1, sizeof(char *));
+		block->lines[0] = strdup(in->name);
+		in++;
+	}
+	return block;
+}
 
 static Block *
 factor() {
-	Block *block;
-	if(in->type == OPAREN) {
-		in++;
+	Block *block = NULL;
+	if(accept(OPAREN)) {
 		block = expression();
 		expect(CLOPAREN);
 		block = concath(oparen(block->height), block);
 		block = concath(block, cloparen(block->height));
-	} else if(in->type == NUM) {
-		block = malloc(sizeof(Block));
-		block->height = 1;
-		block->width = strlen(in->name);
-		block->lines = calloc(1, sizeof(char *));
-		block->lines[0] = strdup(in->name);
-		in++;
-	} else if(in->type == VAR) {
-		block = malloc(sizeof(Block));
-		block->height = 1;
-		block->width = strlen(in->name);
-		block->lines = calloc(1, sizeof(char *));
-		block->lines[0] = strdup(in->name);
-		in++;
 	} else {
-		fprintf(stderr,"Expected factor, found %s instead\n", tok_string[in->type]);
-		exit(EXIT_FAILURE);
+		block = value(); 
 	}
+	return block;
+}
+
+static Block *
+fraction() {
+	Block *block;
+	block = factor();
+	if(accept(DIV)) {
+		Block *block2 = fraction();
+		if(block2) {
+			block = concatv(block, stretch1h(max(block->width, block2->width),"⎯"));
+			block = concatv(block, block2);
+		}
+	} 
 	return block;
 }
 
 static Block *
 term() {
-	Block *block = factor();
-	while(in->type == PROD || in->type == DIV) {
-		if(in->type == PROD) {
-			in++;
-			// For explicit mul:
-			//block = concath(block, single("×"));
-			block = concath(block, single("⋅"));
-			block = concath(block, factor());
-		} else if(in->type == DIV) {
-			in++;
-			Block *block2 = factor();
-			block = concatv(block, stretch1h(max(block->width, block2->width),"⎯"));
-			block = concatv(block, block2);
-		} 
-	}
-
+	Block *block;
+	block = fraction();
+	if(accept(PROD)) {
+		block = concath(block, single("⋅"));
+		block = concath(block, term());
+	} 
 	return block;
 }
 
 static Block *
 expression() {
-	Block *block = term();
-	if(in->type == ADD) {
-		in++;
+	Block *block;
+	block = term();
+	if(accept(ADD)) {
 		block = concath(block, single("+"));
 		block = concath(block, expression());
-	} else if (in->type == SUB) {
-		in++;
-		block = concath(block, single("−"));
+	} else if(accept(SUB)) {
+		block = concath(block, single("-"));
 		block = concath(block, expression());
 	}
 	return block;
@@ -127,6 +127,5 @@ parse(struct Token *input)
 		exit(EXIT_FAILURE);
 		
 	}
-	return block;
-	
+	return block;	
 }
