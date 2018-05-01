@@ -135,7 +135,6 @@ void tokenize(const char * input) {
 			case '0' ... '9': tok.type = NUM; break;
 			case 'a' ... 'z':
 			case 'A' ... 'Z': tok.type = VAR; break;
-			case '\n': tok.type = EOL; break;
 			case ' ': tok.type = NONE; break;
 			default: 
 					  fprintf(stderr, "Unknown symbol %c\n", (int)*in);
@@ -165,4 +164,6 @@ void tokenize(const char * input) {
 			tok_add(tok);
 		}
 	}
+	tok.type = EOL;
+	tok_add(tok);
 }

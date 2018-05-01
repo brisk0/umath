@@ -5,6 +5,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
+#include <readline/readline.h>
+#include <readline/history.h>
 #include "token.h"
 #include "parse.h"
 
@@ -23,23 +25,15 @@ void print_tok(struct Token tok) {
 
 int main(int argc, char *argv[]) {
 	char *input;
-	size_t n;
 
-	//while(true) {
-		n = 0;
-		input = NULL;
+	input = readline("> ");
+	if(!input) {
+		return EXIT_SUCCESS;
+	}
 
-		getline(&input, &n, stdin);
-		tokenize(input);
-		// printf("Completed tokenization\n");
-		//for(int i = 0; i < tokcount; i++) {
-		//	print_tok(toklist[i]);
-		//	printf(" ");
-		//}
-		// printf("\nCompleted printing\n");
-		print_block(parse(toklist));
+	tokenize(input);
+	print_block(parse(toklist));
 
-		free(input);
-	//}
+	free(input);
 	return EXIT_SUCCESS;
 }

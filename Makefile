@@ -6,13 +6,13 @@ STD=gnu11
 all: $(FILENAME)
 
 release: *.h *.c
-	clang $(SRCNAME) $(DEPS) -o$(FILENAME) -std=$(STD) -lm -lz -Wall -O2
+	clang $(SRCNAME) $(DEPS) -o$(FILENAME) -std=$(STD) -lm -lz -lreadline -Wall -O2
 
 $(FILENAME): *.h *.c
-	clang $(SRCNAME) $(DEPS) -o$(FILENAME) -std=$(STD) -lm -lz -Wall -O0 -g
+	clang $(SRCNAME) $(DEPS) -o$(FILENAME) -std=$(STD) -lm -lz -lreadline -Wall -O0 -g
 
 debug: *.h *.c
-	clang $(SRCNAME) $(DEPS) -o$(FILENAME) -std=$(STD) -lm -lz -Wall -O0 -g -fsanitize=address -fsanitize=undefined
+	clang $(SRCNAME) $(DEPS) -o$(FILENAME) -std=$(STD) -lm -lz -lreadline -Wall -O0 -g -fsanitize=address -fsanitize=undefined
 
 run: $(FILENAME)
 	./$(FILENAME)

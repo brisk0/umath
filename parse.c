@@ -42,8 +42,6 @@ accept(enum TokenType t) {
  * Each nonterminal is represented by a function here. Terminals are
  * represented by token(TokenType). 
  * See grammar.ebnf for a mostly-formal grammar.
- * expect() is a macro which makes the function return false if the result is
- * unacceptable.
  */
 
 static Block *factor();
@@ -125,7 +123,6 @@ parse(struct Token *input)
 	if(in->type != EOL) {
 		fprintf(stderr, "Trailing characters; Possible missing operator before %s\n", in->name? in->name : tok_string[in->type]);
 		exit(EXIT_FAILURE);
-		
 	}
 	return block;	
 }
