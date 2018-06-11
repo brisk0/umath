@@ -15,6 +15,7 @@ void free_block(Block *block) {
 		free(block->lines[i]);
 	}
 	free(block->lines);
+	free(block);
 }
 
 Block *
@@ -23,7 +24,7 @@ spaces(int width, int height) {
 	block->height = height;
 	block->width = width;
 	block->lines = calloc(height, sizeof(char *));
-	char *line = calloc(width + 1, sizeof(char) );
+	char line[width + 1];
 
 	for(int i=0; i < width; i++) {
 		line[i] = ' ';
@@ -33,8 +34,6 @@ spaces(int width, int height) {
 	for(int i=0; i < height; i++) {
 		block->lines[i] = strdup(line);
 	}
-
-	free(line);
 
 	return block;
 }
