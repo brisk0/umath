@@ -1,4 +1,47 @@
 #include "block.h"
+
+/*
+ *  Block Memory management
+ */
+
+static Block ** block_list = NULL;
+static int block_count = 0;
+static int block_cap = 0;
+
+Block *new_block(int width, int height, char **lines){
+	// Init list
+	if(!block_list){
+		block_list = malloc(8 * sizeof(Block *));
+		block_cap = 8;
+	}
+
+	// Expand list
+	if(block_count == block_cap) {
+		block_list = realloc(block_list, 1.5 * block_cap * sizeof(Block *));
+		block_cap = 1.5 * block_cap;
+	}
+
+	// Copy lines so that we control their lifetime
+	char **lines_dup = malloc(height * sizeof(char *));
+	for(int i = 0; i < height; i++) {
+		lines_dup[i] = strdup(lines[i]);
+	}
+	
+	Block * new_block = malloc(sizeof(Block));
+	*new_block = (Block){width, height, lines_dup};
+	printf("count:%d, cap:%d, allocation:\n", block_count, block_cap);
+	new_block? print_block(new_block) : printf("NULL\n");
+
+	block_list[block_count++] = new_block;
+	return new_block;
+}
+
+void cleanup_blocks() {
+	for(int i = 0; i < block_count; i++) {
+		free_block(block_list[i]);
+	}
+}
+
 /*
  *  Block Construction Operations
  */
@@ -20,10 +63,10 @@ void free_block(Block *block) {
 
 Block *
 spaces(int width, int height) {
-	Block * block = malloc(sizeof(Block));
-	block->height = height;
-	block->width = width;
-	block->lines = calloc(height, sizeof(char *));
+	//Block * block = malloc(sizeof(Block));
+	//block->height = height;
+	//block->width = width;
+	//block->lines = calloc(height, sizeof(char *));
 	char line[width + 1];
 
 	for(int i=0; i < width; i++) {
@@ -31,11 +74,13 @@ spaces(int width, int height) {
 	}
 	line[width] = '\0';
 
+	char *lines[height];
 	for(int i=0; i < height; i++) {
-		block->lines[i] = strdup(line);
+		lines[i] = line;
 	}
 
-	return block;
+	return new_block(width, height, lines);
+
 }
 
 Block *
@@ -50,8 +95,6 @@ center(int width, int height, Block *block) {
 		Block *right = spaces(rightmargin, block->height);
 		block = concath(left, block);
 		block = concath(block, right);
-		free_block(left);
-		free_block(right);
 	}
 	
 	// Height
@@ -63,37 +106,32 @@ center(int width, int height, Block *block) {
 		Block *bottom = spaces(block->width, botmargin);
 		block = concatv(top, block);
 		block = concatv(block, bottom);
-		free_block(top);
-		free_block(bottom);
 	}
 	return block;
 }
 
+// TODO strdups are creating unmanaged memory.
 Block *
 concatv(Block *b1, Block *b2) {
 	if(!b1) return b2;
 	if(!b2) return b1;
 
-	Block *block = malloc(sizeof(Block));
-	block->width = max(b1->width, b2->width);
-	block->height = b1->height + b2->height;
-	block->lines = calloc(block->height, sizeof(char *));
+	int width = max(b1->width, b2->width);
+	int height = b1->height + b2->height;
+	char *lines[height];
 
-	Block *top    = center(block->width, 0, b1);
-	Block *bottom = center(block->width, 0, b2);
+	Block *top    = center(width, 0, b1);
+	Block *bottom = center(width, 0, b2);
 
-	for(int i = 0; i < block->height; i++) {
+	for(int i = 0; i < height; i++) {
 		if(i < top->height) {
-			block->lines[i] = strdup(top->lines[i]);
+			lines[i] = strdup(top->lines[i]);
 		} else {
-			block->lines[i] = strdup(bottom->lines[i - top->height]);
+			lines[i] = strdup(bottom->lines[i - top->height]);
 		}
 	}
 
-	//free_block(top);
-	//free_block(bottom);
-
-	return block;
+	return new_block(width, height, lines);
 }
 
 Block *
@@ -108,18 +146,18 @@ concath(Block *b1, Block *b2) {
 		printf("2nd block has no lines\n");
 	}
 
-	Block * block = malloc(sizeof(Block));
+	int height;
 	if(b1->height != b2->height) {
-		block->height = max(b1->height, b2->height);
-		b1 = center(b1->width, block->height, b1);
-		b2 = center(b2->width, block->height, b2);
+		height = max(b1->height, b2->height);
+		b1 = center(b1->width, height, b1);
+		b2 = center(b2->width, height, b2);
 	} else {
-		block->height = b1->height;
+		height = b1->height;
 	}
-	block->width = b1->width + b2->width;
+	int width = b1->width + b2->width;
 
 	// Concatenate each line
-	block->lines = calloc(block->height, sizeof(char *));
+	char *lines[height];
 	for(int i=0; i < b1->height; i++) {
 		if(b1->lines[i] == NULL) {
 			printf("Line %d is missing from block 1\nHeight is %d\n", i, b1->height);
@@ -127,43 +165,40 @@ concath(Block *b1, Block *b2) {
 		if(b2->lines[i] == NULL) {
 			printf("Line %d is missing from block 2\n", i);
 		}
-		block->lines[i] = calloc(strlen(b1->lines[i]) + strlen(b2->lines[i]) + 1, sizeof(char));
-		block->lines[i] = strcpy(block->lines[i], b1->lines[i]);
-		block->lines[i] = strcat(block->lines[i], b2->lines[i]);
+		lines[i] = calloc(strlen(b1->lines[i]) + strlen(b2->lines[i]) + 1, sizeof(char));
+		lines[i] = strcpy(lines[i], b1->lines[i]);
+		lines[i] = strcat(lines[i], b2->lines[i]);
 	}
-	return block;
+	return new_block(width, height, lines);
 }
 
 Block *
 stretch1h(int width, char *fill) {
-	Block * block = malloc(sizeof(Block));
-	block->height = 1;
-	block->width = width;
+	int height = 1;
 
-	block->lines = calloc(1, sizeof(char *));
-	block->lines[0] = calloc(strlen(fill)*width + 1, sizeof(char)) ;
+	char *lines[1];
+	char line[strlen(fill)*width + 1];
+	lines[0] = line;
 
-	block->lines[0][0] = '\0';
+	lines[0][0] = '\0';
 	for(int i=0; i < width; i++) {
-		block->lines[0] = strcat(block->lines[0], fill);
+		lines[0] = strcat(lines[0], fill);
 	}
 
-	return block;
+	return new_block(width, height, lines);
 }
 
 Block *
 stretch3v(int height, char * start, char *fill, char *end) {
-	Block * block = malloc(sizeof(Block));
-	block->height = height;
-	block->width = 1;
-	block->lines = calloc(height, sizeof (char *));
-	block->lines[0] = strdup(start);
-	block->lines[height-1] = strdup(end);
+	int width = 1;
+	char *lines[height];
+	lines[0] = strdup(start);
+	lines[height-1] = strdup(end);
 	for(int i=1; i < height - 1; i++) {
-		block->lines[i] = strdup(fill);
+		lines[i] = strdup(fill);
 	}
 
-	return block;
+	return new_block(width, height, lines);
 }
 
 Block *
@@ -185,10 +220,9 @@ stretch5v(int height, char * start, char *fill, char *mid1, char *mid2, char *en
 
 Block *
 single(char *sym) {
-	Block *block = malloc(sizeof(Block));
-	block->width = 1;
-	block->height = 1;
-	block->lines = calloc(1, sizeof(char *));
-	block->lines[0] = strdup(sym);
-	return block;
+	int width = 1;
+	int height = 1;
+	char *lines[] = {sym};
+
+	return new_block(width, height, lines);
 }

@@ -33,6 +33,7 @@ int main(int argc, char *argv[]) {
 
 	tokenize(input);
 	print_block(parse(toklist));
+	cleanup_blocks();
 
 	free(input);
 	return EXIT_SUCCESS;

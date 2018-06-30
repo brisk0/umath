@@ -21,6 +21,13 @@ typedef struct {
 	char **lines;
 } Block;
 
+// Allocates a new block to be later cleaned up with cleanup_blocks()
+// lines is safely duplicated, and so need not persist after the call
+// to new_block()
+Block *new_block(int width, int height, char **lines);
+
+void cleanup_blocks();
+
 void print_block(Block *block);
 
 void free_block(Block *block);
