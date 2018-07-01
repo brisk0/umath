@@ -29,8 +29,8 @@ Block *new_block(int width, int height, char **lines){
 	
 	Block * new_block = malloc(sizeof(Block));
 	*new_block = (Block){width, height, lines_dup};
-	printf("count:%d, cap:%d, allocation:\n", block_count, block_cap);
-	new_block? print_block(new_block) : printf("NULL\n");
+	//printf("count:%d, cap:%d, allocation:\n", block_count, block_cap);
+	//new_block? print_block(new_block) : printf("NULL\n");
 
 	block_list[block_count++] = new_block;
 	return new_block;
@@ -40,6 +40,8 @@ void cleanup_blocks() {
 	for(int i = 0; i < block_count; i++) {
 		free_block(block_list[i]);
 	}
+	free(block_list);
+	block_list = NULL;
 }
 
 /*
