@@ -140,37 +140,27 @@ concath(Block *b1, Block *b2) {
 	if(!b1) return b2;
 	if(!b2) return b1;
 
-	if(b1->lines == NULL) {
-		printf("1st block has no lines\n");
-	}
-	if(b2->lines == NULL) {
-		printf("2nd block has no lines\n");
-	}
-
-	int height;
-	if(b1->height != b2->height) {
-		height = max(b1->height, b2->height);
-		b1 = center(b1->width, height, b1);
-		b2 = center(b2->width, height, b2);
-	} else {
-		height = b1->height;
-	}
+	int height = max(b1->height, b2->height);
 	int width = b1->width + b2->width;
+	b1 = center(b1->width, height, b1);
+	b2 = center(b2->width, height, b2);
 
 	// Concatenate each line
 	char *lines[height];
-	for(int i=0; i < b1->height; i++) {
-		if(b1->lines[i] == NULL) {
-			printf("Line %d is missing from block 1\nHeight is %d\n", i, b1->height);
-		}
-		if(b2->lines[i] == NULL) {
-			printf("Line %d is missing from block 2\n", i);
-		}
+	for(int i=0; i < height; i++) {
 		lines[i] = calloc(strlen(b1->lines[i]) + strlen(b2->lines[i]) + 1, sizeof(char));
 		lines[i] = strcpy(lines[i], b1->lines[i]);
 		lines[i] = strcat(lines[i], b2->lines[i]);
 	}
-	return new_block(width, height, lines);
+
+	Block *block = new_block(width, height, lines);
+
+	// Cleanup
+	for(int i=0; i < height; i++) {
+		free(lines[i]);
+	}
+
+	return block;
 }
 
 Block *
