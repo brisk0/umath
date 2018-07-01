@@ -2,19 +2,20 @@ FILENAME=umath
 SRCNAME=main.c
 DEPS=umath.c token.c block.c block_sym.c parse.c util.c
 STD=gnu11
+CC=clang
 
-all: $(FILENAME)
+all: release
 
 release: *.h *.c
-	clang $(SRCNAME) $(DEPS) -o$(FILENAME) -std=$(STD) -lm -lz -lreadline -Wall -O2
+	$(CC) $(SRCNAME) $(DEPS) -o$(FILENAME) -std=$(STD) -lm -lz -lreadline -Wall -O2
 
 $(FILENAME): *.h *.c
-	clang $(SRCNAME) $(DEPS) -o$(FILENAME) -std=$(STD) -lm -lz -lreadline -Wall -O0 -g
+	$(CC) $(SRCNAME) $(DEPS) -o$(FILENAME) -std=$(STD) -lm -lz -lreadline -Wall -O0 -g
 
 debug: *.h *.c
-	clang $(SRCNAME) $(DEPS) -o$(FILENAME) -std=$(STD) -lm -lz -lreadline -Wall -O0 -g -fsanitize=address -fsanitize=undefined
+	$(CC) $(SRCNAME) $(DEPS) -o$(FILENAME) -std=$(STD) -lm -lz -lreadline -Wall -O0 -g -fsanitize=address -fsanitize=undefined
 
 run: $(FILENAME)
 	./$(FILENAME)
 
-.PHONY: all run
+.PHONY: all release run
