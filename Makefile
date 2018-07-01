@@ -1,6 +1,6 @@
 FILENAME=umath
 SRCNAME=main.c
-DEPS=token.c block.c block_sym.c parse.c
+DEPS=token.c block.c block_sym.c parse.c util.c
 STD=gnu11
 
 all: $(FILENAME)

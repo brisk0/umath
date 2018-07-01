@@ -44,5 +44,4 @@ struct Token *toklist;
 int tokcount;
 
 void tokenize(const char * in);
-
 #endif

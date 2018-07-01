@@ -6,6 +6,7 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <stdio.h>
+#include <wchar.h>
 #include "util.h"
 #include "token.h"
 #include "block.h"

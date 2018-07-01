@@ -44,25 +44,29 @@ bool tokisop(struct Token tok) {
 	}
 }
 
-// Valid characters for variable names
-bool issym(char c) {
-	switch(c) {
-		case 'A' ... 'Z':
-		case 'a' ... 'z':
-		case '_': // Subscripts valid in variable names. Superscripts are not because of exponentiation
-		case '\'': // prime. This *may* become a differentiation operator at some point
-			return true;
-			break;
-		default:
-			return false;
-			break;
-	}
+static enum TokenType tok_type(const char *c) {
+		switch(*c) {
+			case '+': return  ADD;
+			case '-': return  SUB;
+			case '*': return  PROD;
+			case '/': return  DIV;
+			case '^': return  EXP;
+			case '(': return  OPAREN;
+			case ')': return  CLOPAREN;
+			case '{': return  OBRACE;
+			case '}': return  CLOBRACE;
+			case '[': return  OBRACKET;
+			case ']': return  CLOBRACKET;
+			case '0' ... '9': return NUM;
+			case ' ': return NONE;
+			default: return VAR;
+		}
 }
 
 static struct Token tok_var() {
 	int n = 0;
 	const char *start = in;
-	while (*in && issym(*in)) {
+	while (*in && (tok_type(in) == VAR)) {
 		in++;
 		n++;
 	}
@@ -108,7 +112,6 @@ static struct Token tok_num() {
 	return tok;
 }
 
-
 void tokenize(const char * input) {
 	tokcount = 0;
 	in = input;
@@ -119,28 +122,7 @@ void tokenize(const char * input) {
 	toklist = malloc(tokcap * sizeof *toklist);
 
 	while(*in) {
-		tok.type = NONE;
-		switch(*in) {
-			case '+': tok.type = ADD; break;
-			case '-': tok.type = SUB; break;
-			case '*': tok.type = PROD; break;
-			case '/': tok.type = DIV; break;
-			case '^': tok.type = EXP; break;
-			case '(': tok.type = OPAREN; break;
-			case ')': tok.type = CLOPAREN; break;
-			case '{': tok.type = OBRACE; break;
-			case '}': tok.type = CLOBRACE; break;
-			case '[': tok.type = OBRACKET; break;
-			case ']': tok.type = CLOBRACKET; break;
-			case '0' ... '9': tok.type = NUM; break;
-			case 'a' ... 'z':
-			case 'A' ... 'Z': tok.type = VAR; break;
-			case ' ': tok.type = NONE; break;
-			default: 
-					  fprintf(stderr, "Unknown symbol %c\n", (int)*in);
-					  exit(EXIT_FAILURE);
-					  break;
-		}
+		tok.type = tok_type(in);
 		if(tok.type == NUM) {
 			//char *end = NULL;
 			//errno = 0;

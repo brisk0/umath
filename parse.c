@@ -53,8 +53,7 @@ value() {
 	Block *block = NULL;
 	if(in->type == NUM || in->type == VAR) {
 		int height = 1;
-		// FIXME Doesn't support unicode graphemes. See ICU lib
-		int width = strlen(in->name);
+		int width = mbwidth(in->name);
 		char *lines[1];
 		lines[0] = in->name;
 		block = new_block(width, height, lines);
