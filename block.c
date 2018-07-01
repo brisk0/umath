@@ -48,6 +48,21 @@ void cleanup_blocks() {
  *  Block Construction Operations
  */
 
+char *str_block(Block *block) {
+	int bufsize = 0;
+	for(int i = 0; i < block->height; i++) {
+		bufsize += strlen(block->lines[i]) + 1;
+	}
+	char *buffer = malloc(bufsize + 1);
+	char *head = buffer;
+
+	for(int i = 0; i < block->height; i++) {
+		head += sprintf(head, "%s\n", block->lines[i]);
+	}
+
+	return buffer;
+}
+
 void print_block(Block *block) {
 	if(!block) return;
 	for(int i = 0; i < block->height; i++) {

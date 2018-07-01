@@ -28,6 +28,9 @@ Block *new_block(int width, int height, char **lines);
 
 void cleanup_blocks();
 
+// Turn a block into a printable string
+char *str_block(Block *block);
+
 void print_block(Block *block);
 
 void free_block(Block *block);
