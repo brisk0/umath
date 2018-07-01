@@ -52,11 +52,12 @@ static Block *
 value() {
 	Block *block = NULL;
 	if(in->type == NUM || in->type == VAR) {
-		block = malloc(sizeof(Block));
-		block->height = 1;
-		block->width = strlen(in->name);
-		block->lines = calloc(1, sizeof(char *));
-		block->lines[0] = strdup(in->name);
+		int height = 1;
+		// FIXME Doesn't support unicode graphemes. See ICU lib
+		int width = strlen(in->name);
+		char *lines[1];
+		lines[0] = in->name;
+		block = new_block(width, height, lines);
 		in++;
 	}
 	return block;

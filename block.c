@@ -112,7 +112,6 @@ center(int width, int height, Block *block) {
 	return block;
 }
 
-// TODO strdups are creating unmanaged memory.
 Block *
 concatv(Block *b1, Block *b2) {
 	if(!b1) return b2;
@@ -127,9 +126,9 @@ concatv(Block *b1, Block *b2) {
 
 	for(int i = 0; i < height; i++) {
 		if(i < top->height) {
-			lines[i] = strdup(top->lines[i]);
+			lines[i] = top->lines[i];
 		} else {
-			lines[i] = strdup(bottom->lines[i - top->height]);
+			lines[i] = bottom->lines[i - top->height];
 		}
 	}
 
@@ -194,10 +193,10 @@ Block *
 stretch3v(int height, char * start, char *fill, char *end) {
 	int width = 1;
 	char *lines[height];
-	lines[0] = strdup(start);
-	lines[height-1] = strdup(end);
+	lines[0] = start;
+	lines[height-1] = end;
 	for(int i=1; i < height - 1; i++) {
-		lines[i] = strdup(fill);
+		lines[i] = fill;
 	}
 
 	return new_block(width, height, lines);
