@@ -9,16 +9,21 @@
 int main(int argc, char *argv[]) {
 	char *input;
 
-	input = readline("> ");
+	if(argc < 2) {
+		input = readline("> ");
+	} else {
+		input = argv[1];
+	}
+
 	if(!input) {
 		return EXIT_SUCCESS;
 	}
-	
+
 	char *output = umath(input);
 	printf("%s", output);
 
 	free(output);
-	free(input);
+	if(argc < 2) free(input);
 
 	return EXIT_SUCCESS;
 }

@@ -1,4 +1,4 @@
-UMATH
+UMath
 =====
 Terminal-based prettifier for mathematical expressions using unicode maths symbols
 
@@ -17,12 +17,21 @@ To build binary:
 
 Usage
 -----
-Run the binary:
 
-    $ ./umath
+    umath [input]
 
-Umath uses *readline* for interactive input, and prints prettified expression
-to standard out.
+Example usages
+
+	$ echo "input" | ./umath
+
+	$ ./umath "input"
+
+	$ ./umath
+	> input
+
+UMath can take input from stdin, arg1 or its own interactive prompt (using the readline library).
+
+Regardless of input method, the prettified equation is printed to stdout.
 
 E.g.:
 
