@@ -80,7 +80,7 @@ static Block *
 fraction() {
 	Block *block;
 	block = factor();
-	if(accept(DIV)) {
+	if(block && accept(DIV)) {
 		Block *block2 = fraction();
 		if(block2) {
 			block = concatv(block, stretch1h(max(block->width, block2->width),"⎯"));
