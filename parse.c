@@ -70,8 +70,18 @@ factor() {
 		expect(CLOPAREN);
 		block = concath(oparen(block->height), block);
 		block = concath(block, cloparen(block->height));
+	} else if(accept(OBRACKET)) {
+		block = expression();
+		expect(CLOBRACKET);
+		block = concath(obracket(block->height), block);
+		block = concath(block, clobracket(block->height));
+	} else if(accept(OBRACE)) {
+		block = expression();
+		expect(CLOBRACE);
+		block = concath(obrace(block->height), block);
+		block = concath(block, clobrace(block->height));
 	} else {
-		block = value(); 
+		block = value();
 	}
 	return block;
 }
