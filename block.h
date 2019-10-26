@@ -58,7 +58,7 @@ concath(Block *b1, Block *b2);
 // Horizontally stretches a single character to width "width"
 // E.g. stretch1h(3, "-") → "---"
 Block *
-stretch1h(int width, char *fill);
+stretch1h(int width, const char *fill);
 
 // Stretches a 3-part symbol to arbitrary height
 // E.g. stretchv(4,"⎛","⎜","⎝") produces:
@@ -67,19 +67,19 @@ stretch1h(int width, char *fill);
 // ⎜
 // ⎝
 Block *
-stretch3v(int height, char * start, char *fill, char *end);
+stretch3v(int height, const char * start, const char *fill, const char *end);
 
 // Same as above but inserts "mid" in the center (or center +1 if odd)
 Block *
-stretch4v(int height, char * start, char *fill, char *mid, char *end);
+stretch4v(int height, const char * start, const char *fill, const char *mid, const char *end);
 
 // Same as above but inserts two mid characters at height/2 and height/2 + 1
 // in the center
 Block *
-stretch5v(int height, char * start, char *fill, char *mid1, char *mid2, char *end);
+stretch5v(int height, const char * start, const char *fill, const char *mid1, const char *mid2, const char *end);
 
 // Returns a block containing a single grapheme
 Block *
-single(char *sym);
+single(const char *sym);
 
 #endif /* BLOCK_H */

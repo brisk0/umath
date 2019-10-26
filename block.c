@@ -179,7 +179,7 @@ concath(Block *b1, Block *b2) {
 }
 
 Block *
-stretch1h(int width, char *fill) {
+stretch1h(int width, const char *fill) {
 	int height = 1;
 
 	char *lines[1];
@@ -195,40 +195,43 @@ stretch1h(int width, char *fill) {
 }
 
 Block *
-stretch3v(int height, char * start, char *fill, char *end) {
+stretch3v(int height, const char * start, const char *fill, const char *end) {
 	int width = 1;
 	char *lines[height];
-	lines[0] = start;
-	lines[height-1] = end;
+	lines[0] = (char *)start;
+	lines[height-1] = (char *)end;
 	for(int i=1; i < height - 1; i++) {
-		lines[i] = fill;
+		lines[i] = (char *)fill;
 	}
 
 	return new_block(width, height, lines);
 }
 
 Block *
-stretch4v(int height, char * start, char *fill, char *mid, char *end) {
+stretch4v(int height, const char * start, const char *fill, const char *mid, const char *end) {
 	Block *block = stretch3v(height, start, fill, end);
-	block->lines[height/2 + height%2] = mid;
+	free(block->lines[height/2]);
+	block->lines[height/2] = strdup(mid);
 
 	return block;
 }
 
 Block *
-stretch5v(int height, char * start, char *fill, char *mid1, char *mid2, char *end) {
+stretch5v(int height, const char * start, const char *fill, const char *mid1, const char *mid2, const char *end) {
 	Block *block = stretch3v(height, start, fill, end);
-	block->lines[height/2] = mid1;
-	block->lines[height/2 + height%2] = mid2;
+	free(block->lines[height/2]);
+	block->lines[height/2] = strdup(mid1);
+	free(block->lines[height/2 + height%2]);
+	block->lines[height/2 + height%2] = strdup(mid2);
 
 	return block;
 }
 
 Block *
-single(char *sym) {
+single(const char *sym) {
 	int width = 1;
 	int height = 1;
-	char *lines[] = {sym};
+	char *lines[] = {(char *)sym};
 
 	return new_block(width, height, lines);
 }
